@@ -1,16 +1,18 @@
-# aie_project
+Flutter App with Login and Register Functionality
+A Flutter-based mobile application that provides user authentication features. The back end is powered by Flask with SQLAlchemy as the database ORM, ensuring a lightweight, efficient, and database-agnostic server handling for user registration and login.
 
-A new Flutter project.
+Features
+Flutter Frontend:
 
-## Getting Started
+Sleek and modern UI.
+Responsive design suitable for both Android and iOS.
+Smooth animations and feedback upon user actions.
+Flask Backend with SQLAlchemy:
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Secure registration and login endpoints.
+Database abstraction through SQLAlchemy, enabling easy switch between databases.
+Prerequisites
+Flutter SDK
+Python 3.x
+pip
+Virtualenv (optional)
