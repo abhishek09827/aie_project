@@ -1,3 +1,4 @@
+import 'package:aie_project/screens/verify_email.dart';
 import 'package:aie_project/service/http_service.dart';
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -17,48 +18,23 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  Auth _auth = Auth.sigin;
   late String username;
-  late String pass;
-  final _signUpFormKey = GlobalKey<FormState>();
-  final _signInFormKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-
-  void signUpUser(){
-    // authServices.signUpUser(
-    //     context: context,
-    //     name: _nameController.text,
-    //     email: _emailController.text,
-    //     password: _passwordController.text
-    // );
-  }
-  void signInUser(){
-    // authServices.signInUser(
-    //     context: context,
-    //     email: _emailController.text,
-    //     password: _passwordController.text
-    // );
-  }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _nameController.dispose();
-
-  }
+  late String email;
+  late String password;
+  late String retypePassword;
+  late String mobileNumber;
+  Auth _auth = Auth.sigin;
+  
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: SizedBox(
             height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [
                 Container(
-                  height: 370,
+                  height: 520,
                   width: double.infinity,
                   decoration:const BoxDecoration(
 
@@ -75,7 +51,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text("Hello Again !",style: GoogleFonts.poppins(color: Colors.white,shadows:  <Shadow>[
-                          Shadow(
+                          const Shadow(
                           offset: Offset(1.0, 2.0),
                             blurRadius: 2.0,
                             color: Colors.white,
@@ -101,7 +77,6 @@ class _AuthScreenState extends State<AuthScreen> {
                           shape: BoxShape.rectangle
                       )     ,
                       child: Form(
-                        key: _signUpFormKey,
                         child: SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +86,12 @@ class _AuthScreenState extends State<AuthScreen> {
                                 padding: EdgeInsetsDirectional.symmetric(horizontal: 50),
                                 child: VxTextField(
                                   hint: "Username",
-                                  controller: _nameController,
+                                  onChanged: (value){
+                                  setState(() {
+                                    username=value;
+                                  });
+      
+                                  },
 
                                 ).p(20),
                               ),
@@ -119,7 +99,12 @@ class _AuthScreenState extends State<AuthScreen> {
                                 padding: EdgeInsetsDirectional.symmetric(horizontal: 50),
                                 child: VxTextField(
                                   hint: "Email",
-                                  controller: _nameController,
+                                  onChanged: (value){
+                                  setState(() {
+                                    email=value;
+                                  });
+      
+                                  },
 
                                 ).p(20),
                               ),
@@ -127,7 +112,12 @@ class _AuthScreenState extends State<AuthScreen> {
                                 padding: EdgeInsetsDirectional.symmetric(horizontal: 50),
                                 child: VxTextField(
                                   hint: "Mobile no.",
-                                  controller: _nameController,
+                                  onChanged: (value){
+                                  setState(() {
+                                    mobileNumber=value;
+                                  });
+      
+                                  },
 
                                 ).p(20),
                               ),
@@ -135,7 +125,26 @@ class _AuthScreenState extends State<AuthScreen> {
                                 padding: EdgeInsetsDirectional.symmetric(horizontal: 50),
                                 child: VxTextField(
                                   hint: "Password",
-                                  controller: _nameController,
+                                  onChanged: (value){
+                                  setState(() {
+                                    password=value;
+                                  });
+      
+                                  },
+
+
+                                ).p(20),
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.symmetric(horizontal: 50),
+                                child: VxTextField(
+                                  hint: "Re-Type Password",
+                                  onChanged: (value){
+                                  setState(() {
+                                    retypePassword=value;
+                                  });
+      
+                                  },
 
 
                                 ).p(20),
@@ -152,11 +161,12 @@ class _AuthScreenState extends State<AuthScreen> {
                                   backgroundColor: MaterialStateProperty.all(Color(0xff9163D7))
                                 ),
                                 child: Text("Login",style: GoogleFonts.lato(color:Colors.white),).text.make(),
-                                onPressed: (){
-                                  if(_signUpFormKey.currentState!.validate()){
-                                    signUpUser();
-                                  }
-                                },
+                                onPressed: ()async {
+                                  //passing the textfield values to signupStep1 api
+                  await HttpService.signupStep1(username, email, password,retypePassword,mobileNumber, context);
+
+//navigating next page for verification of email
+ },
                               ).p12(),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -191,7 +201,6 @@ class _AuthScreenState extends State<AuthScreen> {
                           shape: BoxShape.rectangle
                       )     ,
                       child: Form(
-                        key: _signUpFormKey,
                         child: SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,9 +211,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 padding: EdgeInsetsDirectional.symmetric(horizontal: 50),
                                 child: VxTextField(
                                   hint: "Email",
-                                  controller: _nameController,
                                   onChanged: (value) {
-                                    username = value;
+                                    email = value;
                                   },
 
                                 ).p(20),
@@ -214,9 +222,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 padding: EdgeInsetsDirectional.symmetric(horizontal: 50),
                                 child: VxTextField(
                                   hint: "Password",
-                                  controller: _nameController,
                                   onChanged: (value) {
-                                    pass = value;
+                                    password = value;
                                   },
 
 
@@ -235,7 +242,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                                 child: Text("Login",style: GoogleFonts.lato(color:Colors.white),).text.make(),
                                 onPressed: () async {
-                                  await HttpService.login(username, pass, context);
+                                  await HttpService.login(username, password, context);
                                 },
                               ).p12(),
                               Row(

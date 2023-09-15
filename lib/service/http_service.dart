@@ -1,33 +1,64 @@
 import 'dart:convert';
 
-import 'package:aie_project/screens/welcome_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 
+import '../screens/dashboard.dart';
+import '../screens/sign_up_step2.dart';
+import '../screens/verify_email.dart';
+import '../screens/welcome_screen.dart';
+
 
 class HttpService {
   static final _client = http.Client();
 
-  static var _loginUrl = Uri.parse('http://localhost:5000/login');
+  static var _loginUrl = Uri.parse('http://localhost:5000//login');
 
-  static var _registerUrl = Uri.parse('http://localhost:5000/register');
+  static var _verifyUrl = Uri.parse('http://localhost:5000/verify-code');
+  static var _signUpStep1Url = Uri.parse('http://localhost:5000/signup-step1');
+   static var _signUpStep2Url = Uri.parse('http://localhost:5000/signup-step2');
+  
 
-  static login(username, pass, context) async {
-    http.Response response = await _client.post(_loginUrl, body: {
+  static signupStep1(username,email ,password,retypePassword,mobileNumber, context) async {
+    http.Response response = await _client.post(_signUpStep1Url, body: {
       'uname': username,
-      'passw': pass,
+      'email':email,
+      'passw': password,
+      'repass':retypePassword,
+      'mobno':mobileNumber
     });
 
     if (response.statusCode == 200) {
       print(jsonDecode(response.body));
       var json = jsonDecode(response.body);
 
-      if (json['status'] == 'Login Sucessfully') {
-        await EasyLoading.showSuccess(json['status']);
+      if (response.statusCode != 400) {
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => WelcomeScreen()));
+            MaterialPageRoute(builder: (context) => VerifyEmail(email: email)));
+      } else {
+        EasyLoading.showError(json['status']);
+      }
+    } else {
+      await EasyLoading.showError(
+          "Error Code : ${response.statusCode.toString()}");
+    }
+  }
+  static verifyCode(email, context) async {
+    http.Response response = await _client.post(_verifyUrl, body: {
+      'email':email
+    
+    });
+
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+      var json = jsonDecode(response.body);
+
+      if (json['status'] == 'Verification successful. Please complete the signup process.') {
+       EasyLoading.showSuccess(json['status']);
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => SignUpStep2Screen()));
       } else {
         EasyLoading.showError(json['status']);
       }
@@ -37,21 +68,44 @@ class HttpService {
     }
   }
 
-  static register(username, email, pass, context) async {
-    http.Response response = await _client.post(_registerUrl, body: {
-      'uname': username,
+  static login(email, pass, context) async {
+    http.Response response = await _client.post(_loginUrl, body: {
       'mail': email,
       'passw': pass,
     });
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
-      if (json['status'] == 'username already exist') {
+      if (json['status'] == 'Login successful. You can access the dashboard now.') {
         await EasyLoading.showError(json['status']);
       } else {
         await EasyLoading.showSuccess(json['status']);
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => WelcomeScreen()));
+      }
+    } else {
+      await EasyLoading.showError(
+          "Error Code : ${response.statusCode.toString()}");
+    }
+  }
+  static signupStep2(email,instituteName ,address,udiseCode,document, context) async {
+    http.Response response = await _client.post(_signUpStep2Url, body: {
+      'email': email,
+      'instName':instituteName,
+      'address': address,
+      'udiseCode':udiseCode,
+      'document':document
+    });
+
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+      var json = jsonDecode(response.body);
+
+      if (response.statusCode != 400) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => Dashboard()));
+      } else {
+        EasyLoading.showError(json['status']);
       }
     } else {
       await EasyLoading.showError(
